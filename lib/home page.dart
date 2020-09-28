@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nilesh_project/cart.dart';
-import 'package:nilesh_project/contact.dart';
 import 'package:nilesh_project/history.dart';
-import 'package:nilesh_project/search.dart';
 import 'package:nilesh_project/shop.dart';
 
 class MainPage extends StatefulWidget {
@@ -25,11 +23,11 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         backgroundColor: Colors.green,
-        selectedIconTheme: IconThemeData(size: 40),
         selectedItemColor: Colors.white,
         selectedFontSize: 14,
         unselectedItemColor: Colors.white.withOpacity(.60),
@@ -54,6 +52,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
+
       body: _bottomScreens[_currentIndex],
     );
   }
