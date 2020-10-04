@@ -136,11 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 0.80 * MediaQuery.of(context).size.height,
-            padding: EdgeInsets.zero,
-            child: _drawerScreens[_currentScreen],
+          Expanded(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.zero,
+              child: _drawerScreens[_currentScreen],
+            ),
           )
         ],
       )
