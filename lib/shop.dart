@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Shop extends StatelessWidget {
 
-
-
   final List<String> _categories = [
     "Fruits",
     "Vegetables",
@@ -39,19 +37,24 @@ class Shop extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.all(0.0),
             padding: EdgeInsets.all(0.0),
-            child: GridView.count(
-                childAspectRatio: (itemWidth / itemHeight),
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                children: List.generate(_categories.length, (index) {
-                  if(index.isEven) {
-                    return Item(title: _categories[index], left: 16.0, right: 8.0,);
-                  } else if(index.isOdd) {
-                    return Item(title: _categories[index], left: 8.0, right: 16.0,);
-                  } else {
-                    return null;
-                  }
-                })
+            child: StreamBuilder<QuerySnapshot>(
+              stream: null,
+              builder: (context, snapshot) {
+                return GridView.count(
+                    childAspectRatio: (itemWidth / itemHeight),
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    children: List.generate(_categories.length, (index) {
+                      if(index.isEven) {
+                        return Item(title: _categories[index], left: 16.0, right: 8.0,);
+                      } else if(index.isOdd) {
+                        return Item(title: _categories[index], left: 8.0, right: 16.0,);
+                      } else {
+                        return null;
+                      }
+                    })
+                );
+              }
             ),
           ),
         ),
