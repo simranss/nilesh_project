@@ -12,6 +12,8 @@ class Shop extends StatelessWidget {
     "Grains",
   ];
 
+  int counter = 0;
+
   @override
   Widget build(BuildContext context) {
 
@@ -37,22 +39,20 @@ class Shop extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.all(0.0),
             padding: EdgeInsets.all(0.0),
+            width: MediaQuery.of(context).size.width,
             child: StreamBuilder<QuerySnapshot>(
-              stream: null,
+              stream: FirebaseFirestore.instance.collection("categories").snapshots(),
               builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
+                List<DocumentSnapshot> snapshots = snapshot.data.docs;
+                print("Data: $snapshots");
                 return GridView.count(
-                    childAspectRatio: (itemWidth / itemHeight),
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    children: List.generate(_categories.length, (index) {
-                      if(index.isEven) {
-                        return Item(title: _categories[index], left: 16.0, right: 8.0,);
-                      } else if(index.isOdd) {
-                        return Item(title: _categories[index], left: 8.0, right: 16.0,);
-                      } else {
-                        return null;
-                      }
-                    })
+                  childAspectRatio: (itemWidth / itemHeight),
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  children: snapshots.map((data) => _buildGridViewItem(context, data)).toList()
                 );
               }
             ),
@@ -60,5 +60,21 @@ class Shop extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildGridViewItem(BuildContext context, DocumentSnapshot data) {
+
+    print("New Data: $data");
+    counter++;
+    String name = data.data()["name"];
+    print("Category: $name");
+
+    if(counter.isOdd) {
+      return Item(title: name, left: 16.0, right: 8.0,);
+    } else if(counter.isEven) {
+      return Item(title: name, left: 8.0, right: 16.0,);
+    } else {
+      return null;
+    }
   }
 }
