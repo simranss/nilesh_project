@@ -23,15 +23,12 @@ class Shop extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Expanded(
-          flex: 0,
-          child: Center(
-            child: Text(
-              "SHOP BY CATEGORY",
-              style: TextStyle(
-                color: Color(0xFF666666),
-                fontSize: 16,
-              ),
+        Center(
+          child: Text(
+            "SHOP BY CATEGORY",
+            style: TextStyle(
+              color: Color(0xFF666666),
+              fontSize: 16,
             ),
           ),
         ),
@@ -44,7 +41,13 @@ class Shop extends StatelessWidget {
               stream: FirebaseFirestore.instance.collection("categories").snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return CircularProgressIndicator();
+                  return Center(
+                    child: Container(
+                      width: 0.33333333333333 * MediaQuery.of(context).size.width,
+                      height: 0.33333333333333 * MediaQuery.of(context).size.width,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 }
                 List<DocumentSnapshot> snapshots = snapshot.data.docs;
                 print("Data: $snapshots");

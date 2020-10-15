@@ -39,15 +39,15 @@ class _MainPageState extends State<MainPage> {
         },
         items: [
           BottomNavigationBarItem(
-              title: Text("My Orders"),
+              label: "My Orders",
               icon: Icon(Icons.history)
           ),
           BottomNavigationBarItem(
-              title: Text("Shop"),
+              label: "Shop",
               icon: Icon(Icons.shopping_basket,)
           ),
           BottomNavigationBarItem(
-              title: Text("Cart"),
+              label: "Cart",
               icon: Icon(Icons.shopping_cart)
           ),
         ],

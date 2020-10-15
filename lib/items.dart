@@ -59,10 +59,16 @@ class Items extends StatelessWidget{
               padding: EdgeInsets.all(0.0),
               width: MediaQuery.of(context).size.width,
               child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance.collection("categories").doc(category).collection(category).snapshots(),
+                  stream: FirebaseFirestore.instance.collection("categories").doc(category.toLowerCase()).collection(category.toLowerCase()).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return CircularProgressIndicator();
+                      return Center(
+                        child: Container(
+                          width: 0.33333333333333 * MediaQuery.of(context).size.width,
+                          height: 0.33333333333333 * MediaQuery.of(context).size.width,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     }
                     List<DocumentSnapshot> snapshots = snapshot.data.docs;
                     print("Data: $snapshots");

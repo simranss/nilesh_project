@@ -11,8 +11,11 @@ class PriceTag extends StatelessWidget {
     if (price != null) {
       return Column(
         children: [
-          SizedBox(height: 32,),
-          Text("₹$price")
+          SizedBox(height: 20,),
+          Text(
+            "₹$price",
+            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+          )
         ],
       );
     } else {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nilesh_project/price_tag.dart';
+import 'package:nilesh_project/price tag.dart';
 import 'items.dart';
 
 class Item extends StatelessWidget {
@@ -16,7 +16,7 @@ class Item extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if (price != null) {
-      top = 20.0;
+      top = 30.0;
     } else {
       top = 60.0;
     }
@@ -32,14 +32,14 @@ class Item extends StatelessWidget {
           elevation: 2,
           child: InkWell(
             child: Padding(
-              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: top,),
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, top: top, bottom: 16.0),
               child: Column(
                 children: [
                   Text(
                     title,
                     style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 32,),
+                  SizedBox(height: 24,),
                   Image(image: AssetImage("assets/fruits.jpg")),
                   PriceTag(price: price,),
                 ],
@@ -47,7 +47,7 @@ class Item extends StatelessWidget {
             ),
             splashColor: Colors.green.withOpacity(0.5),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Items(category: title.toLowerCase(),)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Items(category: title,)));
             },
           ),
         ),
