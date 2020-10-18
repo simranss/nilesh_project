@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nilesh_project/price tag.dart';
+import 'description.dart';
 import 'items.dart';
 
 class Item extends StatelessWidget {
@@ -47,7 +48,17 @@ class Item extends StatelessWidget {
             ),
             splashColor: Colors.green.withOpacity(0.5),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Items(category: title,)));
+              if (price == null) {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Items(category: title,)
+                ));
+              } else if (price != null) {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Description()
+                ));
+              } else {
+                
+              }
             },
           ),
         ),
