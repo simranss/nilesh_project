@@ -13,7 +13,7 @@ class PriceTag extends StatelessWidget {
         children: [
           SizedBox(height: 20,),
           Text(
-            "₹$price",
+            "₹$price/kg",
             style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
           )
         ],

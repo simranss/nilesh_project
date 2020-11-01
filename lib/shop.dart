@@ -4,14 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Shop extends StatelessWidget {
 
-  final List<String> _categories = [
-    "Fruits",
-    "Vegetables",
-    "Spices",
-    "Pulses",
-    "Grains",
-  ];
-
   int counter = 0;
 
   @override
@@ -77,7 +69,7 @@ class Shop extends StatelessWidget {
     } else if(counter.isEven) {
       return Item(title: name, left: 8.0, right: 16.0,);
     } else {
-      return null;
+      return SizedBox(height: 0,);
     }
   }
 }

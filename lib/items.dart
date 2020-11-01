@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nilesh_project/item.dart';
 
+// ignore: must_be_immutable
 class Items extends StatelessWidget{
 
   final String searchQuery;
@@ -96,11 +97,11 @@ class Items extends StatelessWidget{
     print("Item: $name");
 
     if(counter.isOdd) {
-      return Item(title: name, price: price, left: 16.0, right: 8.0,);
+      return Item(title: name, price: price, left: 16.0, right: 8.0, category: category,);
     } else if(counter.isEven) {
-      return Item(title: name, price: price, left: 8.0, right: 16.0,);
+      return Item(title: name, price: price, left: 8.0, right: 16.0, category: category,);
     } else {
-      return null;
+      return SizedBox(height: 0,);
     }
   }
 }

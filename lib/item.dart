@@ -3,13 +3,15 @@ import 'package:nilesh_project/price tag.dart';
 import 'description.dart';
 import 'items.dart';
 
+// ignore: must_be_immutable
 class Item extends StatelessWidget {
 
-  Item({Key key, this.title, this.left, this.right, this.price}) : super(key: key);
+  Item({Key key, this.title, this.left, this.right, this.price, this.category}) : super(key: key);
   final String title;
   final double left;
   final double right;
   final int price;
+  final String category;
 
   double top;
 
@@ -46,7 +48,7 @@ class Item extends StatelessWidget {
                 ],
               ),
             ),
-            splashColor: Colors.green.withOpacity(0.5),
+            splashColor: Colors.lightGreen.withOpacity(0.3),
             onTap: () {
               if (price == null) {
                 Navigator.push(context, MaterialPageRoute(
@@ -54,10 +56,8 @@ class Item extends StatelessWidget {
                 ));
               } else if (price != null) {
                 Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => Description()
+                  builder: (context) => Description(category: category, title: title,)
                 ));
-              } else {
-                
               }
             },
           ),
