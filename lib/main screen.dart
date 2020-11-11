@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: null,
+              accountName: Text(auth.currentUser.displayName),
               accountEmail: Text(auth.currentUser.phoneNumber),
               decoration: BoxDecoration(color: Colors.green),
             ),

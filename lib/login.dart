@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:nilesh_project/main.dart';
 
 class Login extends StatefulWidget {
@@ -12,6 +14,7 @@ class _LoginState extends State<Login> {
   final auth = FirebaseAuth.instance;
 
   String _phone;
+  String _name;
   bool _codeSent = false;
   String _code;
   String verificationId;
@@ -25,6 +28,16 @@ class _LoginState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            TextField(
+              enabled: (!_codeSent),
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(hintText: 'Name'),
+              onChanged: (value) {
+                setState(() {
+                  this._name = value;
+                });
+              },
+            ),
             Row(
               children: [
                 Text('+91'),
@@ -33,7 +46,7 @@ class _LoginState extends State<Login> {
                   child: TextField(
                     enabled: (!_codeSent),
                     keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(hintText: 'Enter your phone number'),
+                    decoration: InputDecoration(hintText: 'Phone number'),
                     onChanged: (value) {
                       setState(() {
                         this._phone = value;
@@ -61,7 +74,7 @@ class _LoginState extends State<Login> {
               ),
               onPressed: () {
                 if (!_codeSent) {
-                  if (_phone.trim().length == 10) {
+                  if ((_phone.trim().length == 10) && (_name.trim().isNotEmpty)) {
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -78,7 +91,7 @@ class _LoginState extends State<Login> {
                               child: Text('Yes, continue', style: TextStyle(color: Colors.green),),
                               onPressed: () {
                                 print('\ncontinue pressed\n');
-                                _registerUser('+91' + _phone.trim(), context);
+                                _registerUser(_name.trim(), '+91' + _phone.trim(), context);
                                 Navigator.pop(context);
                               },
                             )
@@ -86,12 +99,14 @@ class _LoginState extends State<Login> {
                         );
                       }
                     );
-                  } else {
+                  } else if(!(_phone.trim().length == 10)){
                     MyHomePage().showError('Please enter a valid phone number', context);
+                  } else if(!(_name.trim().isNotEmpty)) {
+                    MyHomePage().showError('Please enter a name', context);
                   }
                 } else {
                   if(_code.trim().length == 6) {
-                    MyHomePage().signInWithOTP(_code, verificationId, context);
+                    MyHomePage().signInWithOTP(_code, verificationId, context, _name.trim());
                   } else {
                     MyHomePage().showError('Invalid OTP', context);
                   }
@@ -104,14 +119,14 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Future<void> _registerUser(String mobile, BuildContext context) async {
+  Future<void> _registerUser(String name, String mobile, BuildContext context) async {
     await auth.verifyPhoneNumber(
       phoneNumber: mobile,
 
       timeout: const Duration(seconds: 30),
 
       verificationCompleted: (PhoneAuthCredential credential) {
-        MyHomePage().signIn(credential, context);
+        MyHomePage().signIn(credential, context, name);
       },
 
       verificationFailed: (FirebaseAuthException e) {

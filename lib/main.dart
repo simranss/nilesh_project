@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage {
 
   final auth = FirebaseAuth.instance;
+  final users = FirebaseFirestore.instance.collection('users');
 
   handleAuth() {
     return StreamBuilder(
@@ -50,16 +52,29 @@ class MyHomePage {
   }
 
   //SignIn
-  signIn(AuthCredential authCreds, BuildContext context) {
+  signIn(AuthCredential authCreds, BuildContext context, String name) {
+    print("Logging in");
     FirebaseAuth.instance.signInWithCredential(authCreds).catchError((e) {
       showError(e.toString(), context);
+    }).then((result) {
+      print("Logged in");
+      users.doc(result.user.phoneNumber).get().then((documentSnapshot) {
+            if(!documentSnapshot.exists) {
+              result.user.updateProfile(displayName: name);
+              users.doc(result.user.phoneNumber).set({
+                "name" : name,
+                "number" : result.user.phoneNumber,
+              });
+            }
+      });
     });
   }
 
-  signInWithOTP(smsCode, verId, context) {
+  signInWithOTP(smsCode, verId, context, name) {
+    print("Logging in with OTP");
     AuthCredential authCreds = PhoneAuthProvider.credential(
         verificationId: verId, smsCode: smsCode);
-    signIn(authCreds, context);
+    signIn(authCreds, context, name);
   }
 
   showError (String errorMessage, BuildContext context) {
