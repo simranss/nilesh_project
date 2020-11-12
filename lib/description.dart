@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nilesh_project/price%20tag.dart';
 
@@ -17,9 +18,17 @@ class _DescriptionState extends State<Description> {
   int price;
   int newPrice;
   double quantity = 1;
+  bool wishlisted = false;
+  bool addedToCart = false;
+
+  final user = FirebaseAuth.instance.currentUser;
+  final users = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
+
+    final item = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
+
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -56,9 +65,7 @@ class _DescriptionState extends State<Description> {
                 padding: EdgeInsets.all(0.0),
                 width: MediaQuery.of(context).size.width,
                 child: StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection("categories").doc(widget.category.toLowerCase())
-                      .collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase()).snapshots(),
+                  stream: item.snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
@@ -69,9 +76,8 @@ class _DescriptionState extends State<Description> {
                         ),
                       );
                     }
-                    print(snapshot);
-                    print(snapshot.data);
-                    print(snapshot.data.data());
+                    wishlisted = snapshot.data.data()["wishlisted"];
+                    addedToCart = snapshot.data.data()["addedToCart"];
                     name = snapshot.data.data()["name"];
                     price = snapshot.data.data()["price"];
                     newPrice = (price * quantity).round();
@@ -116,8 +122,8 @@ class _DescriptionState extends State<Description> {
               padding: const EdgeInsets.all(8.0),
               child: TextButton.icon(
                 onPressed: _wishlist,
-                icon: Icon(Icons.favorite, color: Colors.green,),
-                label: Text("Wishlist", style: TextStyle(color: Colors.green),),
+                icon: wishlisted?Icon(Icons.favorite, color: Colors.green,):Icon(Icons.favorite_border, color: Colors.green,),
+                label: wishlisted?Text("Wishlisted", style: TextStyle(color: Colors.grey),):Text("Wishlist", style: TextStyle(color: Colors.green),),
               ),
             ),
           ),
@@ -126,9 +132,9 @@ class _DescriptionState extends State<Description> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
                 onPressed: _addCart,
-                icon: Icon(Icons.add_shopping_cart, color: Colors.white,),
-                label: Text("Add to cart", style: TextStyle(color: Colors.white),),
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+                icon: addedToCart?Icon(Icons.remove_shopping_cart, color: Colors.white,):Icon(Icons.add_shopping_cart, color: Colors.white,),
+                label: addedToCart?Text("Remove", style: TextStyle(color: Colors.white),):Text("Add to cart", style: TextStyle(color: Colors.white),),
+                style: addedToCart?ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey)):ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
               ),
             ),
           ),
@@ -154,10 +160,34 @@ class _DescriptionState extends State<Description> {
   }
 
   void _wishlist() {
-
+    final i = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
+    final wishlist = users.doc(user.phoneNumber).collection("wishlist");
+    if (wishlisted) {
+      wishlist.doc(widget.title).delete();
+    } else {
+      wishlist.doc(widget.title).set({
+        "item": i,
+      });
+    }
+    setState(() {
+      wishlisted = !wishlisted;
+    });
+    i.update({"wishlisted" : wishlisted});
   }
 
   void _addCart() {
-
+    final cart = users.doc(user.phoneNumber).collection("cart");
+    final i = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
+    if (addedToCart) {
+      cart.doc(widget.title).delete();
+    } else {
+      cart.doc(widget.title).set({
+        "item": i,
+      });
+    }
+    setState(() {
+      addedToCart = !addedToCart;
+    });
+    i.update({"addedToCart" : addedToCart});
   }
 }
