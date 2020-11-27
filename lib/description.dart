@@ -18,11 +18,34 @@ class _DescriptionState extends State<Description> {
   int price;
   int newPrice;
   double quantity = 1;
-  bool wishlisted = false;
-  bool addedToCart = false;
+  bool wishlisted;
+  bool addedToCart;
 
   final user = FirebaseAuth.instance.currentUser;
   final users = FirebaseFirestore.instance.collection('users');
+
+  @override
+  void initState() {
+    super.initState();
+
+    final wishlist = users.doc(user.phoneNumber).collection("wishlist");
+    final cart = users.doc(user.phoneNumber).collection("cart");
+
+    wishlist.doc(widget.title).get().then((documentSnapshot) {
+      if (!documentSnapshot.exists) {
+        wishlisted = false;
+      } else {
+        wishlisted = true;
+      }
+    });
+    cart.doc(widget.title).get().then((documentSnapshot) {
+      if (!documentSnapshot.exists) {
+        addedToCart = false;
+      } else {
+        addedToCart = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +99,6 @@ class _DescriptionState extends State<Description> {
                         ),
                       );
                     }
-                    wishlisted = snapshot.data.data()["wishlisted"];
-                    addedToCart = snapshot.data.data()["addedToCart"];
                     name = snapshot.data.data()["name"];
                     price = snapshot.data.data()["price"];
                     newPrice = (price * quantity).round();
@@ -161,33 +182,37 @@ class _DescriptionState extends State<Description> {
 
   void _wishlist() {
     final i = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
-    final wishlist = users.doc(user.phoneNumber).collection("wishlist");
+    final w = users.doc(user.phoneNumber).collection("wishlist");
     if (wishlisted) {
-      wishlist.doc(widget.title).delete();
+      w.doc(widget.title).delete();
+      setState(() {
+        wishlisted = false;
+      });
     } else {
-      wishlist.doc(widget.title).set({
+      w.doc(widget.title).set({
         "item": i,
       });
+      setState(() {
+        wishlisted = true;
+      });
     }
-    setState(() {
-      wishlisted = !wishlisted;
-    });
-    i.update({"wishlisted" : wishlisted});
   }
 
   void _addCart() {
-    final cart = users.doc(user.phoneNumber).collection("cart");
+    final c = users.doc(user.phoneNumber).collection("cart");
     final i = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
     if (addedToCart) {
-      cart.doc(widget.title).delete();
+      c.doc(widget.title).delete();
+      setState(() {
+        addedToCart = false;
+      });
     } else {
-      cart.doc(widget.title).set({
+      c.doc(widget.title).set({
         "item": i,
       });
+      setState(() {
+        addedToCart = true;
+      });
     }
-    setState(() {
-      addedToCart = !addedToCart;
-    });
-    i.update({"addedToCart" : addedToCart});
   }
 }
