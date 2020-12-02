@@ -7,6 +7,9 @@ import 'package:nilesh_project/wishlist.dart';
 import 'home page.dart';
 
 class MainScreen extends StatefulWidget {
+
+  MainScreen({Key key}) : super(key: key);
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -33,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text(auth.currentUser.displayName),
+              accountName: (auth.currentUser.displayName == null)? null : Text(auth.currentUser.displayName), //Text(auth.currentUser.displayName),
               accountEmail: Text(auth.currentUser.phoneNumber),
               decoration: BoxDecoration(color: Colors.green),
             ),

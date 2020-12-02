@@ -58,14 +58,14 @@ class MyHomePage {
       showError(e.toString(), context);
     }).then((result) {
       print("Logged in");
+      result.user.updateProfile(displayName: name);
       users.doc(result.user.phoneNumber).get().then((documentSnapshot) {
-            if(!documentSnapshot.exists) {
-              result.user.updateProfile(displayName: name);
-              users.doc(result.user.phoneNumber).set({
-                "name" : name,
-                "number" : result.user.phoneNumber,
-              });
-            }
+        if(!documentSnapshot.exists) {
+          users.doc(result.user.phoneNumber).set({
+            "name" : name,
+            "number" : result.user.phoneNumber,
+          });
+        }
       });
     });
   }
