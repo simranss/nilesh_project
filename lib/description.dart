@@ -25,29 +25,6 @@ class _DescriptionState extends State<Description> {
   final users = FirebaseFirestore.instance.collection('users');
 
   @override
-  void initState() {
-    super.initState();
-
-    final wishlist = users.doc(user.phoneNumber).collection("wishlist");
-    final cart = users.doc(user.phoneNumber).collection("cart");
-
-    wishlist.doc(widget.title).get().then((documentSnapshot) {
-      if (!documentSnapshot.exists) {
-        wishlisted = false;
-      } else {
-        wishlisted = true;
-      }
-    });
-    cart.doc(widget.title).get().then((documentSnapshot) {
-      if (!documentSnapshot.exists) {
-        addedToCart = false;
-      } else {
-        addedToCart = true;
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     final item = FirebaseFirestore.instance.collection("categories").doc(widget.category.toLowerCase()).collection(widget.category.toLowerCase()).doc(widget.title.toLowerCase());
@@ -141,22 +118,45 @@ class _DescriptionState extends State<Description> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextButton.icon(
-                onPressed: _wishlist,
-                icon: wishlisted?Icon(Icons.favorite, color: Colors.green,):Icon(Icons.favorite_border, color: Colors.green,),
-                label: wishlisted?Text("Wishlisted", style: TextStyle(color: Colors.grey),):Text("Wishlist", style: TextStyle(color: Colors.green),),
+              child: StreamBuilder(
+                stream: users.doc(user.phoneNumber).collection("wishlist").doc(widget.title).snapshots(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData) {
+                    wishlisted = false;
+                  } else {
+                    print("Wishlist data: " + snapshot.data.data().toString());
+                    wishlisted = true;
+                  }
+                  return TextButton.icon(
+                    onPressed: _wishlist,
+                    icon: wishlisted?Icon(Icons.favorite, color: Colors.green,):Icon(Icons.favorite_border, color: Colors.green,),
+                    label: wishlisted?Text("Wishlisted", style: TextStyle(color: Colors.grey),):Text("Wishlist", style: TextStyle(color: Colors.green),),
+                  );
+                }
               ),
             ),
           ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton.icon(
-                onPressed: _addCart,
-                icon: addedToCart?Icon(Icons.remove_shopping_cart, color: Colors.white,):Icon(Icons.add_shopping_cart, color: Colors.white,),
-                label: addedToCart?Text("Remove", style: TextStyle(color: Colors.white),):Text("Add to cart", style: TextStyle(color: Colors.white),),
-                style: addedToCart?ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey)):ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
-              ),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: users.doc(user.phoneNumber).collection("cart").snapshots(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData) {
+                    print("No data");
+                    addedToCart = false;
+                  } else {
+                    print("Cart data: " +  snapshot.toString());
+                    addedToCart = true;
+                  }
+                  return ElevatedButton.icon(
+                    onPressed: _addCart,
+                    icon: addedToCart?Icon(Icons.remove_shopping_cart, color: Colors.white,):Icon(Icons.add_shopping_cart, color: Colors.white,),
+                    label: addedToCart?Text("Remove", style: TextStyle(color: Colors.white),):Text("Add to cart", style: TextStyle(color: Colors.white),),
+                    style: addedToCart?ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey)):ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+                  );
+                }
+              )
             ),
           ),
         ],
